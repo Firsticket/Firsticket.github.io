@@ -1,0 +1,700 @@
+/* 1. 整个标题区块继续往左移动 */
+#site-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%); /* 仅垂直居中 */
+    width: auto;
+    max-width: 60%;
+    margin-left: -40px; /* 往左移动 20 像素，数值越大左移越多 */
+}
+
+/* 2. 大标题相对小标题居中 */
+#site-title {
+    display: none !important;
+    align-self: center;      /* 改为 center，让大标题在容器内居中 */
+    margin-bottom: 0.5em;    /* 与副标题的间距 */
+    text-align: center;      /* 文字居中 */
+}
+
+/* 3. 副标题贴左（保持不变） */
+#site-subtitle {
+    align-self: flex-start;  /* 保持靠左 */
+    text-align: left;
+    width: 100%;
+    margin-top: 0;
+}
+
+/* 调整打字效果文字的大小 */
+#subtitle {
+    font-size: 2rem; /* 你可以修改这个值，例如 1.5rem, 2.5rem, 32px 等 */
+}
+
+
+/* 在明亮模式下，为首页顶部图添加白色遮罩提亮 */
+#page-header {
+    position: relative; /* 确保伪元素相对于此定位 */
+}
+
+#page-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3); /* 白色半透明层，可调节透明度 */
+    z-index: 1; /* 确保遮罩在背景图上方 */
+    pointer-events: none; /* 让鼠标事件可以穿透 */
+}
+
+/* 确保 header 中的内容（标题、导航等）在遮罩之上 */
+#page-header > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* 明亮模式：白色遮罩用于提亮全局背景 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.4);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* 深色模式：为全局背景图添加黑色遮罩 */
+[data-theme="dark"] #body-wrap::before {
+    content: '';
+    position: fixed; /* 固定定位，覆盖整个视口 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 黑色半透明层，数值越大越暗 */
+    z-index: 0; /* 确保在背景图上方，但在内容下方 */
+    pointer-events: none; /* 让鼠标事件可以穿透 */
+}
+
+/* 确保深色模式下，页面内容在遮罩之上 */
+[data-theme="dark"] #body-wrap > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* 如果网站有背景图，确保它位于遮罩之下 */
+body {
+    background-attachment: fixed; /* 可选：固定背景图 */
+}
+
+/* 深色模式：仅更换首页顶部背景图，不添加任何额外效果 */
+[data-theme="dark"] #page-header {
+    background-image: url('/img/ali-bg-dark.jpg') !important;
+    /* 关键：移除下面这些可能造成干扰的属性 */
+    background-color: transparent !important;      /* 移除背景色 */
+    background-blend-mode: normal !important;      /* 重置混合模式 */
+}
+
+/* 深色模式：仅移除首页顶部图（#page-header）的默认白色遮罩 */
+[data-theme="dark"] #page-header::before,
+[data-theme="dark"] #page-header::after {
+    display: none !important;
+    content: none !important;
+    background-color: transparent !important;
+    opacity: 0 !important;
+}
+
+
+/* 深色模式：强制移除默认的白色遮罩 */
+/* [data-theme="dark"] #page-header::before,
+[data-theme="dark"] #page-header::after,
+[data-theme="dark"] #body-wrap::before,
+[data-theme="dark"] #body-wrap::after {
+    display: none !important;
+    content: none !important;
+    background-color: transparent !important;
+    opacity: 0 !important;
+} */
+
+/* 深色模式：首页顶部图使用深色图片并叠加黑色透明层 */
+[data-theme="dark"] #page-header {
+    background-image: url('/img/ali-bg-dark.jpg') !important;
+    background-color: rgba(0, 0, 0, 0.4) !important; /* 黑色透明层，0.4 代表透明度，可调 */
+    background-blend-mode: multiply !important;      /* 使用 multiply 模式，让黑色与图片融合 */
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+/* 强制深色模式：替换全局背景图，并阻止明亮模式图片显示 */
+[data-theme="dark"] body,
+[data-theme="dark"] #body-wrap {
+    background-image: url('/img/ali-content-bg-dark.jpg') !important;
+    background-size: cover !important;
+    background-position: top !important;
+    background-attachment: fixed !important;
+    background-color: #0d0d0d !important; /* 添加一个深色背景色作为后备 */
+}
+
+/* 让页脚背景图与首页顶部图无缝衔接 */
+#footer {
+    background-image: url('/img/ali-bg.jpg') !important; /* 使用和首页相同的图片 */
+    background-size: cover !important;                  /* 确保图片覆盖整个页脚区域 */
+    background-position: bottom !important;             /* 关键：从图片底部开始显示，以衔接顶部图 */
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;            /* 可选：固定背景，滚动时更连贯 */
+}
+
+/* 深色模式：页脚使用与深色首页相同的图片 */
+[data-theme="dark"] #footer {
+    background-image: url('/img/ali-bg-dark.jpg') !important; /* 替换为深色模式下的图片路径 */
+    background-size: cover !important;
+    background-position: bottom !important;
+    background-repeat: no-repeat !important;
+}
+
+/* 深色模式：暗调橙色滚动条（无悬停效果） */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #005580; /* 暗调蓝色，更沉稳 */
+    border-radius: 3px;
+}
+
+/* 深色模式：从左向右滑入，从右向左滑出 */
+[data-theme="dark"] #nav .menus_item a {
+    position: relative;
+    text-decoration: none !important;
+}
+
+[data-theme="dark"] #nav .menus_item a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #005580;
+    transform: scaleX(0);
+    transform-origin: left center; /* 改为 left center，让滑出时从左向右收缩消失 */
+    transition: transform 0.3s ease-in-out;
+}
+
+[data-theme="dark"] #nav .menus_item a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center; /* 保持和默认一致，实现同向滑入滑出 */
+}
+
+/* 深色模式：搜索按钮下滑条动画（与其他菜单完全一致） */
+/* 1. 清除默认下滑条并设置容器定位 */
+[data-theme="dark"] #search-button .search {
+    position: relative;
+    text-decoration: none !important;
+    border-bottom: none !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* 2. 创建下滑条伪元素，样式与菜单一致 */
+[data-theme="dark"] #search-button .search::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #005580; /* 或 #d4882f，与其他菜单一致 */
+    transform: scaleX(0);
+    transform-origin: left center; /* 从左向右滑入 */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* 3. 悬停时显示下滑条 */
+[data-theme="dark"] #search-button .search:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center; /* 同向滑入滑出 */
+}
+
+
+/* 卡片样式 */
+:root {
+    /* 明亮模式：将纯白改为半透明白色，数字越小越透明 */
+    --card-bg: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] {
+    /* 深色模式：将纯黑改为半透明黑色 */
+    --card-bg: rgba(0, 0, 0, 0.6);
+}
+
+
+/*明亮模式下 目录活跃样式 */
+#aside-content #card-toc .toc-content .toc-link.active {
+    color: rgb(255, 255, 255);
+    background: rgb(73, 177, 245);
+}
+
+/* 暗模式下 目录活跃样式 */
+[data-theme="dark"] #aside-content #card-toc .toc-content .toc-link.active {
+    color: rgb(0, 0, 0);
+    background: #787878;
+}
+
+
+/* ===== 搜索对话框样式 ===== */
+.search-dialog {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  z-index: 1001;
+  display: none;
+  margin-left: -300px;
+  padding: 20px;
+  width: 600px;
+  background: var(--search-bg);
+  --search-height: 100vh;
+  border-radius: 8px; /* 替换了 addBorderRadius(8) 混合宏 */
+}
+
+/* 移动端响应式 (原 +maxWidth768() 混合宏) */
+@media screen and (max-width: 768px) {
+  .search-dialog {
+    top: 0;
+    left: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+}
+
+.search-dialog .search-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  color: var(--search-color); /* 原 $search-color 变量，需确认 */
+  font-size: 1.4em;
+  line-height: 1;
+}
+
+.search-dialog .search-nav .search-dialog-title {
+  margin-right: 4px;
+}
+
+.search-dialog .search-nav #loading-status[hidden] {
+  display: none !important;
+}
+
+.search-dialog .search-nav .search-close-button {
+  flex: 1;
+  color: var(--grey); /* 原 $grey 变量，需确认 */
+  text-align: right;
+  transition: all 0.2s ease;
+}
+
+.search-dialog .search-nav .search-close-button:hover {
+  color: var(--search-color); /* 原 $search-color */
+}
+
+.search-dialog .local-search-input input,
+.search-dialog .local-search-input .ais-SearchBox-input,
+.search-dialog #algolia-search-input input,
+.search-dialog #algolia-search-input .ais-SearchBox-input {
+  padding: 5px 14px;
+  width: 100%;
+  outline: none;
+  border: 2px solid var(--search-color); /* 原 $search-color */
+  border-radius: 40px;
+  background: var(--search-bg);
+  color: var(--search-input-color);
+  -webkit-appearance: none;
+}
+
+/* 明亮模式下的占位文字颜色（半透明黑色） */
+:root {
+    --search-placeholder-color: rgba(0, 0, 0, 0.3);
+}
+
+/* 深色模式下的占位文字颜色（半透明白色） */
+[data-theme="dark"] {
+    --search-placeholder-color: rgba(255, 255, 255, 0.5);
+}
+
+/* 应用变量到占位文字 */
+.search-dialog .local-search-input input::placeholder,
+.search-dialog .local-search-input .ais-SearchBox-input::placeholder,
+.search-dialog #algolia-search-input input::placeholder,
+.search-dialog #algolia-search-input .ais-SearchBox-input::placeholder {
+    color: var(--search-placeholder-color);
+}
+
+.search-dialog .search-result-list,
+.search-dialog .ais-Hits-list {
+  overflow-y: overlay;
+  margin: 0 -20px;
+  padding: 0 22px;
+  max-height: calc(80vh - 220px);
+}
+
+.search-dialog .search-result-list .local-search-hit-item,
+.search-dialog .search-result-list .ais-Hits-item,
+.search-dialog .ais-Hits-list .local-search-hit-item,
+.search-dialog .ais-Hits-list .ais-Hits-item {
+  display: flex;
+  align-items: flex-start;
+  margin: 3px 0;
+  line-height: 1.8;
+  transition: all 0.2s ease-in-out;
+}
+
+.search-dialog .search-result-list .local-search-hit-item:hover,
+.search-dialog .search-result-list .ais-Hits-item:hover,
+.search-dialog .ais-Hits-list .local-search-hit-item:hover,
+.search-dialog .ais-Hits-list .ais-Hits-item:hover {
+  transform: translateY(-1px);
+}
+
+.search-dialog .search-result-list .local-search-hit-item:not([value])::before,
+.search-dialog .search-result-list .ais-Hits-item:not([value])::before,
+.search-dialog .ais-Hits-list .local-search-hit-item:not([value])::before,
+.search-dialog .ais-Hits-list .ais-Hits-item:not([value])::before {
+  display: none;
+}
+
+.search-dialog .search-result-list .local-search-hit-item[value]::before,
+.search-dialog .search-result-list .ais-Hits-item[value]::before,
+.search-dialog .ais-Hits-list .local-search-hit-item[value]::before,
+.search-dialog .ais-Hits-list .ais-Hits-item[value]::before {
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  margin-right: 6px;
+  margin-top: 3px;
+  min-width: 24px;
+  color: var(--search-color); /* 原 $search-color */
+  content: attr(value) ".";
+  font-weight: bold;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.search-dialog .search-result-list .local-search-hit-item::marker,
+.search-dialog .search-result-list .ais-Hits-item::marker,
+.search-dialog .ais-Hits-list .local-search-hit-item::marker,
+.search-dialog .ais-Hits-list .ais-Hits-item::marker {
+  content: none;
+}
+
+.search-dialog .search-result-list .local-search-hit-item a,
+.search-dialog .search-result-list .ais-Hits-item a,
+.search-dialog .ais-Hits-list .local-search-hit-item a,
+.search-dialog .ais-Hits-list .ais-Hits-item a {
+  flex: 1;
+  color: var(--search-a-color);
+}
+
+.search-dialog .search-result-list .local-search-hit-item a:hover,
+.search-dialog .search-result-list .ais-Hits-item a:hover,
+.search-dialog .ais-Hits-list .local-search-hit-item a:hover,
+.search-dialog .ais-Hits-list .ais-Hits-item a:hover {
+  color: var(--search-color); /* 原 $search-color */
+}
+
+.search-dialog .search-result-list .local-search-hit-item .search-result-title,
+.search-dialog .search-result-list .local-search-hit-item .algolia-hits-item-title,
+.search-dialog .search-result-list .ais-Hits-item .search-result-title,
+.search-dialog .search-result-list .ais-Hits-item .algolia-hits-item-title,
+.search-dialog .ais-Hits-list .local-search-hit-item .search-result-title,
+.search-dialog .ais-Hits-list .local-search-hit-item .algolia-hits-item-title,
+.search-dialog .ais-Hits-list .ais-Hits-item .search-result-title,
+.search-dialog .ais-Hits-list .ais-Hits-item .algolia-hits-item-title {
+  font-weight: 600;
+}
+
+.search-dialog .search-result-list .local-search-hit-item .search-result,
+.search-dialog .search-result-list .local-search-hit-item .algolia-hit-item-content,
+.search-dialog .search-result-list .ais-Hits-item .search-result,
+.search-dialog .search-result-list .ais-Hits-item .algolia-hit-item-content,
+.search-dialog .ais-Hits-list .local-search-hit-item .search-result,
+.search-dialog .ais-Hits-list .local-search-hit-item .algolia-hit-item-content,
+.search-dialog .ais-Hits-list .ais-Hits-item .search-result,
+.search-dialog .ais-Hits-list .ais-Hits-item .algolia-hit-item-content {
+  margin: 0 0 8px;
+  word-break: break-all;
+  font-size: 0.9em;
+}
+
+.search-dialog .ais-Pagination {
+  margin: 15px 0 0;
+  padding: 0;
+  text-align: center;
+}
+
+/* 删除分割线的装饰图标（剪刀） */
+.search-dialog hr::before,
+.search-dialog hr::after {
+    content: none !important;  /* 清除内容 */
+    display: none !important;  /* 隐藏元素 */
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: 6px;
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item {
+  display: flex;
+  padding: 0;
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item:not(.ais-Pagination-item--selected):not(.ais-Pagination-item--ellipsis):not(.ais-Pagination-item--disabled) .ais-Pagination-link:hover {
+  background: var(--btn-hover-color);
+  transform: translateY(-1px);
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item .ais-Pagination-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 8px;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--btn-bg);
+  color: var(--btn-color);
+  transition: all 0.2s ease;
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item .ais-Pagination-link.ais-Pagination-link--disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item .ais-Pagination-link i {
+  font-size: 12px;
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item--selected .ais-Pagination-link {
+  background: var(--theme-paginator-color); /* 原 $theme-paginator-color */
+  font-weight: 600;
+  cursor: default;
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item--ellipsis .ais-Pagination-link {
+  padding: 4px 2px;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  cursor: default;
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item--ellipsis .ais-Pagination-link:hover {
+  background: transparent;
+  transform: none;
+}
+
+.search-dialog .ais-Pagination .ais-Pagination-item--disabled .ais-Pagination-link {
+  opacity: 0.4;
+}
+
+/* 取消分页按钮在鼠标悬浮时的上移效果 */
+.search-dialog .ais-Pagination .ais-Pagination-item:not(.ais-Pagination-item--selected):not(.ais-Pagination-item--ellipsis):not(.ais-Pagination-item--disabled) .ais-Pagination-link:hover {
+  transform: none; /* 将平移效果设置为无 */
+}
+
+@media screen and (max-width: 768px) {
+  .search-dialog .ais-Pagination .ais-Pagination-list {
+    gap: 4px;
+  }
+}
+
+.search-dialog hr {
+  margin: 15px auto;
+  /* @extend .custom-hr 需要你自己定义 .custom-hr 样式，或直接写具体边框样式 */
+  border: 0;
+  border-top: 1px solid var(--hr-color, #eee);
+}
+
+/* ===== 搜索遮罩层 ===== */
+#search-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  background: rgba(0, 0, 0, 0.6); /* 原 $dark-black，直接用了黑色 */
+}
+
+/* ===== 搜索统计信息 ===== */
+.search-result-stats,
+.ais-Stats-text {
+  margin: 15px 0 0;
+  color: var(--text-color);
+  text-align: center;
+  font-size: 0.9em;
+}
+
+:root {
+    /* 明亮模式：使用鲜艳的橙色，并调整颜色变量 */
+    --search-border-color: #ff7242; 
+}
+
+[data-theme="dark"] {
+    /* 深色模式：使用亮青色，确保在深色背景上突出 */
+    --search-border-color: #4fc3f7; 
+}
+
+/* 应用样式：加粗边框 + 发光效果 */
+.local-search-input input {
+    border-width: 3px !important;  /* 加粗边框，从默认的1-2px增加到3px */
+    border-color: var(--search-border-color) !important;
+    box-shadow: 0 0 0 3px rgba(255, 114, 66, 0.2); /* 发光效果，颜色需与边框对应 */
+}
+
+/* 针对深色模式调整发光颜色 */
+[data-theme="dark"] .local-search-input input {
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.3); /* 深色模式下使用蓝色发光 */
+}
+
+/* 深色模式下，搜索结果列表滚动条样式（无悬停变化） */
+[data-theme="dark"] .search-dialog .search-result-list::-webkit-scrollbar-thumb {
+    background: #4fc3f7; /* 固定颜色，鼠标悬停时不再变化 */
+    border-radius: 3px;
+}
+
+
+/* ===== 搜索关键词高亮 ===== */
+/* 搜索结果关键词高亮 - 明亮模式 */
+:root .search-keyword,
+:root .local-search-hit-item .search-keyword,
+:root .ais-Hits-item .search-keyword {
+    color: #0066cc !important;          /* 深蓝色文字 */
+    background-color: #e6f2ff !important; /* 浅蓝色背景 */
+    font-weight: 600 !important;        /* 保留半粗体，增加清晰度 */
+    padding: 0 2px;                     /* 给背景一点内边距，更美观 */
+    border-radius: 2px;                /* 轻微圆角，柔和边缘 */
+}
+
+/* 搜索结果关键词高亮 - 深色模式 */
+[data-theme="dark"] .search-keyword,
+[data-theme="dark"] .local-search-hit-item .search-keyword,
+[data-theme="dark"] .ais-Hits-item .search-keyword {
+    color: #66b1ff !important;          /* 亮蓝色文字 */
+    background-color: #1a3a5c !important; /* 深蓝灰背景 */
+    font-weight: 600 !important;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* ===== 加载动画 ===== */
+.search-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: var(--text-color);
+}
+
+.search-loading::before {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--text-color);
+  border-top-color: transparent;
+  border-radius: 50%;
+  content: "";
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== 注意 ===== */
+/* 原 Stylus 代码中最后根据 search.use 引入其他样式（algolia 或 local-search）
+   这部分是主题内部的处理，在自定义 CSS 中不需要重复引入。
+   如果发现某些样式缺失，请检查主题原本的 CSS 文件。 */
+
+
+/* 隐藏公告图标（基于类名） */
+.fa-bullhorn {
+    display: none !important;
+}
+
+/* 让公告标题的文字居中，图标隐藏 */
+.card-announcement .item-headline span {
+    display: block;          /* 让 span 占满整行 */
+    margin-left: 0 !important; /* 将 6px 的外边距归零 */
+    text-align: center;      /* 文字居中 */
+    width: 100%;             /* 确保宽度占满 */
+}
+
+
+/* 右侧栏中浏览量等，隐藏特定的两个统计项 */
+.webinfo-item:has(#busuanzi_value_site_uv),
+.webinfo-item:has(#busuanzi_value_site_pv) {
+    display: none !important;
+}
+
+/* 修改文章底部导航卡片的背景色（直接修改父容器） */
+.pagination-related {
+    background: rgba(73, 177, 245, 0.5) !important; /* 替换为你想要的颜色 */
+}
+
+/* 深色模式 导航卡片*/
+[data-theme="dark"] .pagination-related {
+    background: rgba(0, 35, 53, 0.2) !important;
+}
+
+/* 强制显示分类页标题 */
+#page-site-info #site-title {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 2.5rem !important; /* 调整为你想要的大小 */
+    color: #ffffff !important;    /* 调整为你想要的颜色 */
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* 使用相对定位移动标题容器 */
+#page-site-info {
+    position: relative;
+    left: -500px; /* 负值向左移动 */
+}
+
+/* 隐藏评论区域上方的分割线 */
+.custom-hr {
+    display: none !important;
+}
+
+
+/* 头像图片悬停效果 */
+.avatar-img img:hover {
+    transform: none !important; /* 取消默认的缩放效果 */
+}
