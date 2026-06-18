@@ -18,6 +18,8 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
+      - name: List theme source files
+        run: ls -la themes/butterfly/source/
       - name: List public folder contents
         run: ls -la public/
       - name: Upload artifact
