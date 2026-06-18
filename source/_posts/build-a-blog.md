@@ -119,9 +119,37 @@ $ git push -u origin main
 # 默认分支是 master，就改成 git push -u origin master
 ```
 
+### 踩坑经验
+git 后出现以下返回信息时：
+
+```
+hint: You've added another git repository inside your current repository.
+hint: Clones of the outer repository will not contain the contents of
+hint: the embedded repository and will not know how to obtain it.
+```
+
+是因为 themes/butterfly 文件夹内包含独立的 .git 子文件夹，这导致 Git 将其识别为一个嵌套的 Git 仓库（子模块），而不是主仓库的一部分。
+
+推送代码时，主仓库只保存了对这个子模块的引用（一个指针），而没有包含主题的实际文件。
+
+因此，GitHub Actions 在构建时无法找到 source/js/ 和 source/img/ 等关键目录，导致生成的 public 文件夹不完整。
+
+所以运行以下命令，移除 Git 对它的特殊索引，使其成为一个普通文件夹并正确提交。
+
+```bash
+# 从 Git 的暂存区中移除对 themes/butterfly 的特殊引用
+$ git rm --cached -f themes/butterfly  
+# 重新添加 themes/butterfly 作为普通文件夹
+$ git add themes/butterfly
+# 提交更改
+$ git commit -m "修复主题文件夹的 Git 追踪问题"
+# 推送 Github
+$ git push
+```
+
 ## 后续更新和维护
 ```bash
-$ hexo clean   # 清理缓存（可选）
+$ hexo clean && hexo generate   # 清理并生成静态文件（推荐）
 $ git add .
 $ git commit -m "更新了博客内容或样式"
 $ git push
